@@ -35,7 +35,7 @@ var time = new Date().getTime();
 
 if (cluster.isMaster){
   console.log(`Master ${process.pid} is running`);
-  const size = 1000000 / numCPUs; 
+  const size = 10000000 / numCPUs; 
   // Fork workers.
   for (let i = 0; i < numCPUs; i++) {
     cluster.fork({ start: i*size, end: (i + 1)*size });
@@ -57,14 +57,16 @@ function seedDB(){
     const db = client.db('wegot-sidebar');
     const collection = db.collection('restaurants');
 
-    var count = process.env.end - process.env.start;
+    var count = parseInt(process.env.end) - parseInt(process.env.start);
     const size = 20000; 
     // console.log('cprocess.env',  typeof (currentCount*size + process.env.start))
-    let begin = parseInt(currentCount*size + process.env.start);
-    let finish = parseInt((currentCount*size + 1) + process.env.start );
+    // console.log(`Worker ${process.pid}`, 'process.env.start', process.env.start, 'process.env.end', process.env.end);
     async function insertBulk(){
+      let begin = currentCount*size + parseInt(process.env.start);
+      let finish = (currentCount + 1)*size + parseInt(process.env.start );
+      // console.log('begin:', begin, 'finish:', finish);
       var ops = _.range(begin, finish).map((id) => {
-        console.log('the id bitch', id);
+        // console.log('the id is ', id);
         // obj.place_id = id; 
         return { insertOne: {
           result: {
