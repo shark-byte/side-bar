@@ -7,31 +7,32 @@ var faker = require('faker');
 
 var time = new Date().getTime();
 
-// var count = parseInt(100000 / numCPUs);
-//     const size = 20000;
+let generateData = (id, randomName, address, phoneNumber, website, latitude, longitude) => {
+  let dataObj = {
+    result: {
+      place_id: id,
+      name: randomName,
+      formatted_address: "pier 1 1/2 The Embarcadero, San Francisco, CA 94105, USA",
+      international_phone_number: phoneNumber,
+      website: website,
+      url: "https://maps.google.com/?cid=12288100453195726903",
+      opening_hours: {
+        periods: [
+          {
+            close: {day: 2, time: "1930"},
+            open: {day: 2, time: "1130"}
+          }
+        ],
+        weekday_text: ["Monday: 11:30 AM – 2:30 PM, 5:30 – 9:30 PM", "Tuesday: 11:30 AM – 2:30 PM, 5:30 – 9:30 PM", "Wednesday: 11:30 AM – 2:30 PM, 5:30 – 9:30 PM", "Thursday: 11:30 AM – 2:30 PM, 5:30 – 9:30 PM", "Friday: 11:30 AM – 9:30 PM", "Saturday: 11:30 AM – 9:30 PM", "Sunday: 11:30 AM – 9:30 PM"]
+      },
+      geometry: {
+        location: {lat: 37.797387, lng: -122.395196}
+      }
+    }
+  };
+  return dataObj;
+};
 
-// var obj = {
-//   result: {
-//     place_id: null,
-//     name: faker.name.findName(),
-//     formatted_address: faker.address.streetAddress() + ", San Francisco, CA 94105, USA",
-//     international_phone_number: faker.phone.phoneNumberFormat(),
-//     website: faker.internet.url(),
-//     url: "https://maps.google.com/?cid=12288100453195726903",
-//     opening_hours: {
-//       periods: [
-//         {
-//           close: {day: 2, time: "1930"},
-//           open: {day: 2, time: "1130"}
-//         }
-//       ],
-//       weekday_text: ["Monday: 11:30 AM – 2:30 PM, 5:30 – 9:30 PM", "Tuesday: 11:30 AM – 2:30 PM, 5:30 – 9:30 PM", "Wednesday: 11:30 AM – 2:30 PM, 5:30 – 9:30 PM", "Thursday: 11:30 AM – 2:30 PM, 5:30 – 9:30 PM", "Friday: 11:30 AM – 9:30 PM", "Saturday: 11:30 AM – 9:30 PM", "Sunday: 11:30 AM – 9:30 PM"]
-//     },
-//     geometry: {
-//       location: {lat: 37.797387, lng: -122.395196}
-//     }
-//   }
-// };
 
 if (cluster.isMaster){
   console.log(`Master ${process.pid} is running`);
@@ -59,37 +60,12 @@ function seedDB(){
 
     var count = parseInt(process.env.end) - parseInt(process.env.start);
     const size = 20000; 
-    // console.log('cprocess.env',  typeof (currentCount*size + process.env.start))
-    // console.log(`Worker ${process.pid}`, 'process.env.start', process.env.start, 'process.env.end', process.env.end);
     async function insertBulk(){
       let begin = currentCount*size + parseInt(process.env.start);
       let finish = (currentCount + 1)*size + parseInt(process.env.start );
-      // console.log('begin:', begin, 'finish:', finish);
       var ops = _.range(begin, finish).map((id) => {
-        // console.log('the id is ', id);
-        // obj.place_id = id; 
-        return { insertOne: {
-          result: {
-            place_id: id,
-            name: faker.name.findName(),
-            formatted_address: faker.address.streetAddress() + ", San Francisco, CA 94105, USA",
-            international_phone_number: faker.phone.phoneNumberFormat(),
-            website: faker.internet.url(),
-            url: "https://maps.google.com/?cid=12288100453195726903",
-            opening_hours: {
-              periods: [
-                {
-                  close: {day: 2, time: "1930"},
-                  open: {day: 2, time: "1130"}
-                }
-              ],
-              weekday_text: ["Monday: 11:30 AM – 2:30 PM, 5:30 – 9:30 PM", "Tuesday: 11:30 AM – 2:30 PM, 5:30 – 9:30 PM", "Wednesday: 11:30 AM – 2:30 PM, 5:30 – 9:30 PM", "Thursday: 11:30 AM – 2:30 PM, 5:30 – 9:30 PM", "Friday: 11:30 AM – 9:30 PM", "Saturday: 11:30 AM – 9:30 PM", "Sunday: 11:30 AM – 9:30 PM"]
-            },
-            geometry: {
-              location: {lat: 37.797387, lng: -122.395196}
-            }
-          }
-        } };
+        let dataObj = generateData(count, faker.name.findName(), faker.address.streetAddress() + ', ' + faker.address.city() + ', ' + faker.address.stateAbbr() + ', ' + faker.address.zipCode() + 'USA', faker.phone.phoneNumberFormat(), faker.internet.url(), faker.address.latitude(), faker.address.longitude() );
+        return { insertOne: {dataObj} };
       });
 
       await collection.bulkWrite(ops, { ordered: false }); 
