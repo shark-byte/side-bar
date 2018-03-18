@@ -23,6 +23,7 @@ class App extends React.Component {
   }
 
   render() {
+    console.log('restaurant object:', this.state.restaurant);
     if (!this.state.restaurant) {
       return <div> Loading Sidebar... </div>;
     } else {

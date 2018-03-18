@@ -5,11 +5,11 @@
   "main": "server/index.js",
   "scripts": {
     "database": "mongod",
-    "seed-database": "node db/controllers/seed_database.js",
+    "seed-database": "node seed_database.js",
     "test": "jest",
     "react-dev": "webpack --watch",
     "start": "node server/index.js",
-    "docker-start": "DATABASE_HOST=database node db/controllers/seed_database.js && DATABASE_HOST=database node server/index.js"
+    "docker-start": "DATABASE_HOST=database node seed_database.js && DATABASE_HOST=database node server/index.js"
   },
   "repository": {
     "type": "git",
@@ -45,8 +45,10 @@
     "express": "^4.16.2",
     "google-maps-react": "^1.1.2",
     "jquery": "^3.3.1",
+    "mongodb": "^3.0.4",
     "mongoose": "^5.0.6",
     "morgan": "^1.9.0",
+    "ramda": "^0.25.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "underscore": "^1.8.3"
