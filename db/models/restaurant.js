@@ -4,8 +4,8 @@ databaseHost = process.env.DATABASE_HOST || 'localhost';
 var db = mongoose.connect('mongodb://' + databaseHost + '/wegot-sidebar');
 
 var restaurantSchema = mongoose.Schema({
-  result: {
-    place_id: { type: String, unique: true },
+  // result: {
+    place_id: { type: Number, index: true },
     name: String,
     formatted_address: String,
     international_phone_number: String,
@@ -33,7 +33,7 @@ var restaurantSchema = mongoose.Schema({
         lng: Number
       }
     }
-  }
+  // }
 });
 
 var Restaurant = mongoose.model('Restaurant', restaurantSchema);
