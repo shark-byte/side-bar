@@ -87,9 +87,9 @@ db.tx('massive-insert', t => {
 
 function getNextData(t, pageIndex) {
     let data = null;
-    if (pageIndex < 100000) {
+    if (pageIndex < 10000) {
         data = [];
-        for (let i = 0; i < 100; i++) {
+        for (let i = 0; i < 1000; i++) {
             let dataObj = generateData(faker.name.findName(), faker.address.streetAddress(), faker.phone.phoneNumberFormat(), faker.internet.url() );
             data.push(dataObj);
         }
