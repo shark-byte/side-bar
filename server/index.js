@@ -1,3 +1,5 @@
+require('newrelic');
+const { MongoClient } = require('mongodb');
 var express = require('express');
 var app = express();
 
@@ -5,8 +7,6 @@ var path = require('path');
 var cors = require('cors');
 var morgan = require('morgan');
 var bodyParser = require('body-parser');
-var restaurantsRouter = require('./routers/restaurants.js');
-var restaurantsApiRouter = require('./routers/restaurants_api.js');
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -16,14 +16,40 @@ app.options((req, res) => {
   res.send('OK');
 });
 
-app.get('/bundle.js', (req, res) => {
-  res.sendFile(path.resolve('client/dist/bundle.js'));
-});
 
-app.use('/restaurants', restaurantsRouter);
+app.use('/restaurants/:id', express.static(path.join(__dirname, '../client/dist')));
+
+app.get('/', (req, res) => {
+  res.status(302).redirect('/restaurants/8');
+});
 
 app.use('/api/restaurants', restaurantsApiRouter);
 
+async function queryDb(collection, id) {
+  id = Number(id);
+  const data = await collection.findOne({ place_id: id });
+  return data;
+}
+
+
+  
+MongoClient.connect('mongodb://localhost/', (err, client) => {
+  if (err) {
+    throw err;
+  } else {
+    const db = client.db('wegot-sidebar');
+    const collection = db.collection('restaurants');
+    app.get('/api/restaurants/id:', async (req, res) => {
+      const id = req.params.id;
+      console.log('recieved query for id:', id);
+      const data = await queryDb(collection, db, id).catch((err) => {
+        console.error(err);
+      });
+      res.send(data);
+    });
+  }
+  client.close();
+});
 
 
 var port = process.env.PORT || 3003;
