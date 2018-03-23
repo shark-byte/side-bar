@@ -8,6 +8,7 @@ var faker = require('faker');
 
 var time = new Date().getTime();
 
+
 let generateData = (id, randomName, address, phoneNumber, website) => {
   let dataObj = {
     place_id: id,
@@ -38,7 +39,6 @@ if (cluster.isMaster){
   // Fork workers.
   for (let i = 0; i < numCPUs; i++) {
     cluster.fork({ start: i*size, end: (i + 1)*size });
-    // end - start / 20000
   }
 
   cluster.on('exit', (worker, code, signal) => {
@@ -55,29 +55,35 @@ function seedDB(){
   MongoClient.connect('mongodb://localhost/').then((client) => {
     const db = client.db('wegot-sidebar');
     const collection = db.collection('restaurants');
-
     var count = parseInt(process.env.end) - parseInt(process.env.start);
     const size = 20000; 
+    
     async function insertBulk(){
-      
-      let begin = currentCount*size + parseInt(process.env.start);
-      let finish = (currentCount + 1)*size + parseInt(process.env.start );
-      var ops = _.range(begin, finish).map((id) => {
-        let dataObj = generateData(id, faker.name.findName(), faker.address.streetAddress(), faker.phone.phoneNumberFormat(), faker.internet.url());
-        return { insertOne: dataObj };
-      });
+    let begin = currentCount*size + parseInt(process.env.start);
+    let finish = (currentCount + 1)*size + parseInt(process.env.start );
+    var ops = _.range(begin, finish).map((id) => {
+      let dataObj = generateData(id, faker.name.findName(), faker.address.streetAddress(), faker.phone.phoneNumberFormat(), faker.internet.url());
+      return { insertOne: dataObj };
+    });
 
-      await collection.bulkWrite(ops, { ordered: false }); 
-      count -= size;
-      if (count > 0){
-        currentCount++;
-        insertBulk();
-      } else {
-        console.log('done in ', (new Date().getTime() - time) / 1000, 's ;)');
-        client.close();
-        process.exit();        
+    await collection.bulkWrite(ops, { ordered: false }); 
+    count -= size;
+    if (count > 0){
+      currentCount++;
+      insertBulk();
+    } else {
+      console.log(`worker: ${process.pid} done in ${(new Date().getTime() - time) / 1000}'s ;)`);
+      var totalCount = await collection.count();
+      if (totalCount === 10000000) {
+        console.log(`Creating indicies`);
+        await collection.createIndex({place_id: 'hashed' }).catch((err) => {
+          console.error(err);
+        });
       }
+      client.close();
+      process.exit();        
     }
+  }
 
     insertBulk();
   }).catch((err) => {

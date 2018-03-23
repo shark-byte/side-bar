@@ -5,11 +5,11 @@
   "main": "server/index.js",
   "scripts": {
     "database": "mongod",
-    "seed-database": "node seed_database.js",
+    "seed-database": "node mongo_seed_shark_byte.js",
     "test": "jest",
     "react-dev": "webpack --watch",
     "start": "node server/index.js",
-    "docker-start": "DATABASE_HOST=database node seed_database.js && DATABASE_HOST=database node server/index.js"
+    "docker-start": "DATABASE_HOST=database node mongo_seed_shark_byte.js && DATABASE_HOST=database node server/index.js"
   },
   "repository": {
     "type": "git",
@@ -48,8 +48,10 @@
     "mongodb": "^3.0.4",
     "mongoose": "^5.0.6",
     "morgan": "^1.9.0",
+    "newrelic": "^3.2.0",
     "pg": "^7.4.1",
     "pg-promise": "^8.2.2",
+    "pg-query": "^0.11.0",
     "ramda": "^0.25.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
