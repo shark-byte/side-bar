@@ -9,7 +9,7 @@ exports.config = {
   /**
    * Array of application names.
    */
-  app_name: ['Shark Byte Sidebar'],
+  app_name: ['shark_byte_sidebar'],
   /**
    * Your New Relic license key.
    */
