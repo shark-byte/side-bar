@@ -9,11 +9,11 @@ exports.config = {
   /**
    * Array of application names.
    */
-  app_name: ['shark_byte_sidebar'],
+  app_name: ['Shark Byte'],
   /**
    * Your New Relic license key.
    */
-  license_key: 'ba38fe9562c6b2856e17874e680d4440caef3df3',
+  license_key: '4492601e869d9cc6546e0ba3119d4fd85f4a354e',
   logging: {
     /**
      * Level at which to log. 'trace' is most useful to New Relic when diagnosing

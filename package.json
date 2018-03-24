@@ -5,11 +5,11 @@
   "main": "server/index.js",
   "scripts": {
     "database": "mongod",
-    "seed-database": "node mongo_seed_shark_byte.js",
+    "seed-database": "node seed.js",
     "test": "jest",
     "react-dev": "webpack --watch",
     "start": "node server/index.js",
-    "docker-start": "DATABASE_HOST=database node mongo_seed_shark_byte.js && DATABASE_HOST=database node server/index.js"
+    "docker-start": "DATABASE_HOST=database node seed.js && DATABASE_HOST=database node server/index.js"
   },
   "repository": {
     "type": "git",
@@ -38,6 +38,7 @@
     "webpack": "^3.11.0"
   },
   "dependencies": {
+    "artillery": "^1.6.0-14",
     "axios": "^0.18.0",
     "bluebird": "^3.5.1",
     "body-parser": "^1.18.2",
