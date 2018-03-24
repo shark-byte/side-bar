@@ -20,7 +20,8 @@ var InfoList = (props) => {
       link: {url: 'tel:' + props.restaurant.international_phone_number, newTab: false}
     },
     website: {
-      text: (new URL(props.restaurant.website)).hostname,
+      // text: (new URL(props.restaurant.website)).hostname,
+      text: props.restaurant.website,
       icon: 'fas fa-globe fa-lg',
       link: {url: props.restaurant.website, newTab: true}
     },
