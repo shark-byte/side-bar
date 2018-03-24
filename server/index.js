@@ -23,12 +23,11 @@ app.get('/', (req, res) => {
   res.status(302).redirect('/restaurants/8');
 });
 
-app.use('/api/restaurants', restaurantsApiRouter);
-
 async function queryDb(collection, id) {
   id = Number(id);
   const data = await collection.findOne({ place_id: id });
   return data;
+  client.close();
 }
 
 
@@ -39,17 +38,17 @@ MongoClient.connect('mongodb://localhost/', (err, client) => {
   } else {
     const db = client.db('wegot-sidebar');
     const collection = db.collection('restaurants');
-    app.get('/api/restaurants/id:', async (req, res) => {
-      const id = req.params.id;
+    app.get('/api/restaurants/:id/sidebar', async (req, res) => {
+      const { id } = req.params;
       console.log('recieved query for id:', id);
-      const data = await queryDb(collection, db, id).catch((err) => {
+      const data = await queryDb(collection, id).catch((err) => {
         console.error(err);
       });
       res.send(data);
     });
   }
-  client.close();
 });
+
 
 
 var port = process.env.PORT || 3003;
