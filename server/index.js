@@ -24,7 +24,7 @@ app.use('/', express.static(path.join(__dirname, '../client/dist')));
 
 app.get('/restaurants/:id', async (req, res) => {
   const data = await recs(req);
-  console.log(data);
+  // console.log(data);
   const component = ReactDOMServer.renderToString(React.createElement(sidebarApp.App, { data: data }));
   
   const html = `
@@ -60,11 +60,11 @@ async function queryDb(collection, id) {
 async function recs (req) {
   try {
     const client = await MongoClient.connect('mongodb://localhost/');
-  const db = client.db('wegot-sidebar');
-  const collection = db.collection('restaurants');
-  const { id } = req.params;
-  const data = await queryDb(collection, id);
-  return data;
+    const db = client.db('wegot-sidebar');
+    const collection = db.collection('restaurants');
+    const { id } = req.params;
+    const data = await queryDb(collection, id);
+    return data;
   }
   catch (error) {console.error(error)}
 }
