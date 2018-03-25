@@ -1,4 +1,4 @@
-require('newrelic');
+// require('newrelic');
 const { MongoClient } = require('mongodb');
 var express = require('express');
 var app = express();
