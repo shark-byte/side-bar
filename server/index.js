@@ -5,10 +5,10 @@ var app = express();
 
 var path = require('path');
 var cors = require('cors');
-var bodyParser = require('body-parser');
+// var bodyParser = require('body-parser');
 
 app.use(cors());
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
 
 app.options((req, res) => {
   res.send('OK');

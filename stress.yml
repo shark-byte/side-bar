@@ -5,9 +5,9 @@ config:
  phases:
    # - duration: 10
    #   arrivalRate: 10
-   - duration: 20
-     arrivalRate: 20
-     rampTo: 50
+   - duration: 10
+     arrivalRate: 10
+     rampTo: 20
    # - duration: 10
    #   arrivalRate: 50
    # - duration: 30
@@ -45,4 +45,4 @@ scenarios:
                url: "/api/restaurants/{{ id }}/sidebar"  
 
        # - log: "Sent a request to /restaurants with {{ id }}"          
-         count: 40
+         count: 20
