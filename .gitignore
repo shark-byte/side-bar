@@ -66,3 +66,4 @@ typings/
 
 # new relic
 newrelic.js
+newrelic_agent.log
