@@ -76,9 +76,9 @@ function seedDB(){
       var totalCount = await collection.count();
       if (totalCount === 10000000) {
         console.log(`Creating indicies`);
-        await collection.createIndex({place_id: 'hashed' }).catch((err) => {
+        await collection.createIndex({place_id: 1}, {unique: true}.catch((err) => {
           console.error(err);
-        });
+        })
       }
       client.close();
       process.exit();        
