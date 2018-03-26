@@ -2315,9 +2315,15 @@ var _react2 = _interopRequireDefault(_react);
 
 var _app = __webpack_require__(27);
 
+<<<<<<< HEAD
 __webpack_require__(31);
 
 __webpack_require__(32);
+=======
+__webpack_require__(30);
+
+__webpack_require__(31);
+>>>>>>> map component modified
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -20059,8 +20065,12 @@ exports.OpeningHours = OpeningHours;
 exports.Periods = Periods;
 
 /***/ }),
+<<<<<<< HEAD
 /* 30 */,
 /* 31 */
+=======
+/* 30 */
+>>>>>>> map component modified
 /***/ (function(module, exports) {
 
 (function(exports) {
@@ -20069,7 +20079,7 @@ exports.Periods = Periods;
 
 
 /***/ }),
-/* 32 */
+/* 31 */
 /***/ (function(module, exports) {
 
 /*!
