@@ -76,9 +76,13 @@ function seedDB(){
       var totalCount = await collection.count();
       if (totalCount === 10000000) {
         console.log(`Creating indicies`);
+<<<<<<< HEAD
         await collection.createIndex({place_id: 1 }).catch((err) => {
+=======
+        await collection.createIndex({place_id: 1}, {unique: true}.catch((err) => {
+>>>>>>> 8f6a646c8b255928db02bb6edbc21a9904c58fa4
           console.error(err);
-        });
+        })
       }
       client.close();
       process.exit();        

@@ -5,12 +5,10 @@ var app = express();
 
 var path = require('path');
 var cors = require('cors');
-var morgan = require('morgan');
-var bodyParser = require('body-parser');
+// var bodyParser = require('body-parser');
 
 app.use(cors());
-app.use(bodyParser.json());
-app.use(morgan('tiny'));
+// app.use(bodyParser.json());
 
 app.options((req, res) => {
   res.send('OK');
@@ -40,7 +38,6 @@ MongoClient.connect('mongodb://localhost/', (err, client) => {
     const collection = db.collection('restaurants');
     app.get('/api/restaurants/:id/sidebar', async (req, res) => {
       const { id } = req.params;
-      console.log('recieved query for id:', id);
       const data = await queryDb(collection, id).catch((err) => {
         console.error(err);
       });
