@@ -1,7 +1,9 @@
 import React from 'react';
 // import axios from 'axios';
 import { InfoList } from './InfoList.jsx';
-// import MapContainer from './MapContainer.jsx';
+// if (typeof window !== "undefined") { 
+  import MapContainer from './MapContainer.jsx';
+// }
 
 class App extends React.Component {
   constructor(props) {
@@ -23,20 +25,23 @@ class App extends React.Component {
   // }
 
   render() {
-    // console.log(this.props);
     if (!this.props.data) {
       return <div> Loading Sidebar... </div>;
+    } else if (typeof window === "undefined") {
+      return (
+        <div className="sidebar-flexbox-col sidebar-app">
+          <InfoList restaurant={this.props.data} />
+        </div>
+      );
     } else {
       return (
         <div className="sidebar-flexbox-col sidebar-app">
           <InfoList restaurant={this.props.data} />
-          {/* <MapContainer geometry={this.props.data.geometry} /> */}
+          <MapContainer geometry={this.props.data.geometry} />
         </div>
       );
     }
   }
 }
-// if (typeof window !== "undefined"){ 
-//   ReactDOM.render(<App data={window.initData} />, document.getElementById('sidebar-app'));
-// }
+
 export { App };
