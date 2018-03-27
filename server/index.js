@@ -5,11 +5,17 @@ var app = express();
 
 var path = require('path');
 var cors = require('cors');
+// var morgan = require('morgan');
+var bodyParser = require('body-parser');
+
 const React = require('react');
 const ReactDOMServer = require('react-dom/server');
 const sidebarApp = require('./server-bundle.js');
 console.log(sidebarApp);
 app.use(cors());
+app.use(bodyParser.json());
+// app.use(morgan('tiny'));
+
 // app.options((req, res) => {
 //   res.send('OK');
 // });
@@ -50,7 +56,6 @@ async function queryDb(collection, id) {
   return data;
   client.close();
 }
-
 
 async function recs (req) {
   try {
