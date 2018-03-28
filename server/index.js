@@ -42,10 +42,10 @@ async function queryDb(collection, id) {
   client.close();
 }
 
-database = process.env.DATABASE_HOST || 'localhost';
+// database = process.env.DATABASE_HOST || 'localhost';
 async function recs (req) {
   try {
-    const client = await MongoClient.connect('mongodb://' + database + '/');
+    const client = await MongoClient.connect('mongodb://database:27017/');
     const db = client.db('wegot-sidebar');
     const collection = db.collection('restaurants');
     const { id } = req.params;

@@ -47,10 +47,10 @@ if (cluster.isMaster){
   console.log(`Worker ${process.pid} started`);
 }
 
-database = process.env.DATABASE_HOST || 'localhost';
+// database = process.env.DATABASE_HOST || 'localhost';
 function seedDB(){
   var currentCount = 0;
-  MongoClient.connect('mongodb://' + database + '/').then((client) => {
+  MongoClient.connect('mongodb://database:27017/').then((client) => {
     const db = client.db('wegot-sidebar');
     const collection = db.collection('restaurants');
     var count = parseInt(process.env.end) - parseInt(process.env.start);
@@ -58,7 +58,7 @@ function seedDB(){
     
     async function insertBulk(){
     let begin = currentCount*size + parseInt(process.env.start);
-    let finish = (currentCount + 1)*size + parseInt(process.env.start );
+    let finish = (currentCount + 1)*size + parseInt(process.env.start);
     var ops = _.range(begin, finish).map((id) => {
       let dataObj = generateData(id, faker.name.findName(), faker.address.streetAddress(), faker.phone.phoneNumberFormat(), faker.internet.url());
       return { insertOne: dataObj };
@@ -74,9 +74,9 @@ function seedDB(){
       var totalCount = await collection.count();
       if (totalCount === 10000000) {
         console.log(`Creating indicies`);
-        await collection.createIndex({place_id: 1}, {unique: true}.catch((err) => {
+        await collection.createIndex({place_id: 1}, {unique: true}).catch((err) => {
           console.error(err);
-        })
+        });
       }
       client.close();
       process.exit();        
