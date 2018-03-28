@@ -1,32 +1,21 @@
-// require('newrelic');
 const { MongoClient } = require('mongodb');
 var express = require('express');
 var app = express();
 
 var path = require('path');
 var cors = require('cors');
-// var morgan = require('morgan');
 var bodyParser = require('body-parser');
 
 const React = require('react');
 const ReactDOMServer = require('react-dom/server');
 const sidebarApp = require('./server-bundle.js');
-console.log(sidebarApp);
-app.use(cors());
 app.use(bodyParser.json());
-// app.use(morgan('tiny'));
-
-// app.options((req, res) => {
-//   res.send('OK');
-// });
 
 app.use('/', express.static(path.join(__dirname, '../client/dist')));
 
 app.get('/restaurants/:id', async (req, res) => {
   const data = await recs(req);
-  // console.log(data);
   const component = ReactDOMServer.renderToString(React.createElement(sidebarApp.App, { data: data }));
-  
   const html = `
     <html>
       <head>
@@ -46,10 +35,6 @@ app.get('/restaurants/:id', async (req, res) => {
   res.send(html);
 });
 
-// app.get('/', (req, res) => {
-//   res.status(302).redirect('/restaurants/8');
-// });
-
 async function queryDb(collection, id) {
   id = Number(id);
   const data = await collection.findOne({ place_id: id });
@@ -57,9 +42,10 @@ async function queryDb(collection, id) {
   client.close();
 }
 
+database = process.env.DATABASE_HOST || 'localhost';
 async function recs (req) {
   try {
-    const client = await MongoClient.connect('mongodb://localhost/');
+    const client = await MongoClient.connect('mongodb://' + database + '/');
     const db = client.db('wegot-sidebar');
     const collection = db.collection('restaurants');
     const { id } = req.params;
@@ -70,7 +56,5 @@ async function recs (req) {
 }
  
 
-
-
 var port = process.env.PORT || 3003;
-app.listen(port, () => { console.log('Listening on http://localhost:' + port); });
+app.listen(port, () => { console.log('Listening on ' + port); });
