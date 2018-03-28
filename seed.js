@@ -5,9 +5,7 @@ const cluster = require('cluster');
 const numCPUs = require('os').cpus().length; // 8
 
 var faker = require('faker');
-
 var time = new Date().getTime();
-
 
 let generateData = (id, randomName, address, phoneNumber, website) => {
   let dataObj = {
@@ -49,10 +47,10 @@ if (cluster.isMaster){
   console.log(`Worker ${process.pid} started`);
 }
 
-
+// database = process.env.DATABASE_HOST || 'localhost';
 function seedDB(){
   var currentCount = 0;
-  MongoClient.connect('mongodb://localhost/').then((client) => {
+  MongoClient.connect('mongodb://database:27017/').then((client) => {
     const db = client.db('wegot-sidebar');
     const collection = db.collection('restaurants');
     var count = parseInt(process.env.end) - parseInt(process.env.start);
@@ -60,7 +58,7 @@ function seedDB(){
     
     async function insertBulk(){
     let begin = currentCount*size + parseInt(process.env.start);
-    let finish = (currentCount + 1)*size + parseInt(process.env.start );
+    let finish = (currentCount + 1)*size + parseInt(process.env.start);
     var ops = _.range(begin, finish).map((id) => {
       let dataObj = generateData(id, faker.name.findName(), faker.address.streetAddress(), faker.phone.phoneNumberFormat(), faker.internet.url());
       return { insertOne: dataObj };
@@ -76,13 +74,9 @@ function seedDB(){
       var totalCount = await collection.count();
       if (totalCount === 10000000) {
         console.log(`Creating indicies`);
-<<<<<<< HEAD
-        await collection.createIndex({place_id: 1 }).catch((err) => {
-=======
-        await collection.createIndex({place_id: 1}, {unique: true}.catch((err) => {
->>>>>>> 8f6a646c8b255928db02bb6edbc21a9904c58fa4
+        await collection.createIndex({place_id: 1}, {unique: true}).catch((err) => {
           console.error(err);
-        })
+        });
       }
       client.close();
       process.exit();        
