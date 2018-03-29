@@ -2,7 +2,7 @@
 const MongoClient = require('mongodb').MongoClient;
 const _ = require('ramda');
 const cluster = require('cluster');
-const numCPUs = require('os').cpus().length; // 8
+const numCPUs = require('os').cpus().length; 
 
 var faker = require('faker');
 var time = new Date().getTime();
@@ -18,8 +18,8 @@ let generateData = (id, randomName, address, phoneNumber, website) => {
     opening_hours: {
       periods: [
         {
-          close: {day: 2, time: "1930"},
-          open: {day: 2, time: "1130"}
+          close: {day: 0, time: "1930"},
+          open: {day: 0, time: "1130"}
         }
       ],
       weekday_text: ["Monday: 11:30 AM – 2:30 PM, 5:30 – 9:30 PM", "Tuesday: 11:30 AM – 2:30 PM, 5:30 – 9:30 PM", "Wednesday: 11:30 AM – 2:30 PM, 5:30 – 9:30 PM", "Thursday: 11:30 AM – 2:30 PM, 5:30 – 9:30 PM", "Friday: 11:30 AM – 9:30 PM", "Saturday: 11:30 AM – 9:30 PM", "Sunday: 11:30 AM – 9:30 PM"]
@@ -33,7 +33,7 @@ let generateData = (id, randomName, address, phoneNumber, website) => {
 
 if (cluster.isMaster){
   console.log(`Master ${process.pid} is running`);
-  const size = 10000000 / numCPUs; 
+  const size = 1040000 / numCPUs; 
   // Fork workers.
   for (let i = 0; i < numCPUs; i++) {
     cluster.fork({ start: i*size, end: (i + 1)*size });
@@ -71,8 +71,11 @@ function seedDB(){
       insertBulk();
     } else {
       console.log(`worker: ${process.pid} done in ${(new Date().getTime() - time) / 1000}'s ;)`);
-      var totalCount = await collection.count();
-      if (totalCount === 10000000) {
+      var totalCount = await collection.count().catch((err) => {
+        console.error(err);
+      });
+      console.log(`last worker(s) ${process.pid}`);
+      if (totalCount === 1040000) {
         console.log(`Creating indicies`);
         await collection.createIndex({place_id: 1}, {unique: true}).catch((err) => {
           console.error(err);

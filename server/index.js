@@ -17,20 +17,10 @@ app.get('/restaurants/:id', async (req, res) => {
   const data = await recs(req);
   const component = ReactDOMServer.renderToString(React.createElement(sidebarApp.App, { data: data }));
   const html = `
-    <html>
-      <head>
-        <link rel="stylesheet" href="/styles.css">
-        <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
-        <link rel="icon" href="http://res.cloudinary.com/madlicorice/image/upload/v1520448614/WeGot-favicon.ico" type="image/x-icon"> 
-      </head>
-      <body>
-        <div id="sidebar-app">${component}</div>
-        <script>
-          window.initData = ${JSON.stringify(data)};
-        </script>
-        <script src="/bundle.js" type="text/javascript"></script>
-      </body>
-    </html>
+    <div id="sidebar-app">${component}</div>
+    <script>
+      window.sideBarData = ${JSON.stringify(json)};
+    </script> 
   `;
   res.send(html);
 });
