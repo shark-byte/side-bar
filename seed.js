@@ -31,63 +31,81 @@ let generateData = (id, randomName, address, phoneNumber, website) => {
   return dataObj;
 };
 
-if (cluster.isMaster){
-  console.log(`Master ${process.pid} is running`);
-  const size = 1040000 / numCPUs; 
-  // Fork workers.
-  for (let i = 0; i < numCPUs; i++) {
-    cluster.fork({ start: i*size, end: (i + 1)*size });
-  }
-
-  cluster.on('exit', (worker, code, signal) => {
-    console.log(`worker ${worker.process.pid} finished`);
-  });
-} else {
-  seedDB();
-  console.log(`Worker ${process.pid} started`);
-}
-
-// database = process.env.DATABASE_HOST || 'localhost';
-function seedDB(){
-  var currentCount = 0;
-  MongoClient.connect('mongodb://database:27017/').then((client) => {
+async function isSeeded() {
+  try {
+    const client = await MongoClient.connect('mongodb://database:27017/');
     const db = client.db('wegot-sidebar');
     const collection = db.collection('restaurants');
-    var count = parseInt(process.env.end) - parseInt(process.env.start);
-    const size = 20000; 
-    
-    async function insertBulk(){
-    let begin = currentCount*size + parseInt(process.env.start);
-    let finish = (currentCount + 1)*size + parseInt(process.env.start);
-    var ops = _.range(begin, finish).map((id) => {
-      let dataObj = generateData(id, faker.name.findName(), faker.address.streetAddress(), faker.phone.phoneNumberFormat(), faker.internet.url());
-      return { insertOne: dataObj };
+    var totalCount = await collection.count().catch((err) => {
+      console.error(err);
     });
-
-    await collection.bulkWrite(ops, { ordered: false }); 
-    count -= size;
-    if (count > 0){
-      currentCount++;
-      insertBulk();
+    if (totalCount > 0) {
+      console.log('database is already seeded');
+      client.close();
     } else {
-      console.log(`worker: ${process.pid} done in ${(new Date().getTime() - time) / 1000}'s ;)`);
-      var totalCount = await collection.count().catch((err) => {
-        console.error(err);
-      });
-      console.log(`last worker(s) ${process.pid}`);
-      if (totalCount === 1040000) {
-        console.log(`Creating indicies`);
-        await collection.createIndex({place_id: 1}, {unique: true}).catch((err) => {
+      if (cluster.isMaster){
+        console.log(`Master ${process.pid} is running`);
+        const size = 1040000 / numCPUs; 
+        // Fork workers.
+        for (let i = 0; i < numCPUs; i++) {
+          cluster.fork({ start: i*size, end: (i + 1)*size });
+        }
+      
+        cluster.on('exit', (worker, code, signal) => {
+          console.log(`worker ${worker.process.pid} finished`);
+          client.close();
+        });
+      } else {
+        seedDB();
+        console.log(`Worker ${process.pid} started`);
+      }
+      
+      // database = process.env.DATABASE_HOST || 'database:27017';
+      function seedDB(){
+        var currentCount = 0;
+        MongoClient.connect('mongodb://database:27017/').then((client) => {
+          const db = client.db('wegot-sidebar');
+          const collection = db.collection('restaurants');
+          var count = parseInt(process.env.end) - parseInt(process.env.start);
+          const size = 20000; 
+          
+          async function insertBulk(){
+          let begin = currentCount*size + parseInt(process.env.start);
+          let finish = (currentCount + 1)*size + parseInt(process.env.start);
+          var ops = _.range(begin, finish).map((id) => {
+            let dataObj = generateData(id, faker.name.findName(), faker.address.streetAddress(), faker.phone.phoneNumberFormat(), faker.internet.url());
+            return { insertOne: dataObj };
+          });
+      
+          await collection.bulkWrite(ops, { ordered: false }); 
+          count -= size;
+          if (count > 0){
+            currentCount++;
+            insertBulk();
+          } else {
+            console.log(`worker: ${process.pid} done in ${(new Date().getTime() - time) / 1000}'s ;)`);
+            var totalCount = await collection.count().catch((err) => {
+              console.error(err);
+            });
+            console.log(`last worker(s) ${process.pid}`);
+            if (totalCount === 1040000) {
+              console.log(`Creating indicies`);
+              await collection.createIndex({place_id: 1}, {unique: true}).catch((err) => {
+                console.error(err);
+              });
+            }
+            // client.close();
+            process.exit();        
+          }
+        }
+      
+          insertBulk();
+        }).catch((err) => {
           console.error(err);
         });
       }
-      client.close();
-      process.exit();        
     }
   }
-
-    insertBulk();
-  }).catch((err) => {
-    console.error(err);
-  });
+  catch (error) {console.error(error)}
 }
+isSeeded()

@@ -19,7 +19,7 @@ app.get('/restaurants/:id', async (req, res) => {
   const html = `
     <div id="sidebar-app">${component}</div>
     <script>
-      window.sideBarData = ${JSON.stringify(json)};
+      window.sideBarData = ${JSON.stringify(data)};
     </script> 
   `;
   res.send(html);
